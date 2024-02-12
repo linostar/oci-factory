@@ -40,7 +40,6 @@ class ImageUploadSchema(pydantic.BaseModel):
         extra = pydantic.Extra.forbid
 
     @pydantic.validator("end_of_life")
-    @classmethod
     def ensure_still_supported(cls, v: Optional[datetime]) -> Optional[datetime]:
         """ensure that the end of life isn't reached."""
         if v is None or v < datetime.now(timezone.utc):
@@ -72,7 +71,6 @@ class ChannelsSchema(pydantic.BaseModel):
         return values
 
     @pydantic.validator("end_of_life")
-    @classmethod
     def ensure_still_supported(cls, v: Optional[datetime]) -> Optional[datetime]:
         """ensure that the end of life isn't reached."""
         if v is None or v < datetime.now(timezone.utc):
