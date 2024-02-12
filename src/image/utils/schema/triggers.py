@@ -27,6 +27,13 @@ class ImageUploadReleaseSchema(pydantic.BaseModel):
     class Config:
         extra = pydantic.Extra.forbid
 
+    @pydantic.validator("end_of_life")
+    def ensure_still_supported(cls, v: Optional[datetime]) -> Optional[datetime]:
+        """ensure that the end of life isn't reached."""
+        if v is None or v < datetime.now(timezone.utc):
+            raise ImageReachedEol("This track has reached its end of life")
+        return v
+
 
 class ImageUploadSchema(pydantic.BaseModel):
     """Schema of each upload within the image.yaml files."""
@@ -38,13 +45,6 @@ class ImageUploadSchema(pydantic.BaseModel):
 
     class Config:
         extra = pydantic.Extra.forbid
-
-    @pydantic.validator("end_of_life")
-    def ensure_still_supported(cls, v: Optional[datetime]) -> Optional[datetime]:
-        """ensure that the end of life isn't reached."""
-        if v is None or v < datetime.now(timezone.utc):
-            raise ImageReachedEol("This track has reached its end of life")
-        return v
 
 
 class ChannelsSchema(pydantic.BaseModel):
